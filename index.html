@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -31,7 +32,7 @@
         <button onclick="resetCanvas()">🔄 Recommencer</button>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (compat versions) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
@@ -97,13 +98,13 @@
 
         function saveDrawing() {
             canvas.toBlob(function(blob) {
-                const storageRef = storage.ref();
                 const fileName = "dessins/dessin_" + Date.now() + ".png";
-                const drawingRef = storageRef.child(fileName);
-                drawingRef.put(blob).then(() => {
-                    alert("Dessin enregistré dans Firebase !");
+                const storageRef = storage.ref().child(fileName);
+                storageRef.put(blob).then(() => {
+                    alert("✅ Dessin enregistré dans Firebase !");
                 }).catch((error) => {
-                    console.error("Erreur lors de l'enregistrement :", error);
+                    alert("❌ Erreur lors de l'enregistrement : " + error.message);
+                    console.error("Erreur Firebase Storage :", error);
                 });
             }, 'image/png');
         }
