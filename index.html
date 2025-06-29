@@ -1,23 +1,24 @@
-html_code = """<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Dessin un trait</title>
+    <title>Dessin - Un seul trait</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
         canvas { border: 1px solid #ccc; cursor: crosshair; margin-top: 10px; }
-        .controls { margin: 10px 0; }
+        .controls { margin: 10px; }
+        #saveBtn, #resetBtn { display: none; margin: 10px; }
         #theme { font-size: 1.2em; margin: 10px; font-weight: bold; }
-        #buttons { margin-top: 10px; }
     </style>
 </head>
 <body>
     <h1>Dessine un seul trait</h1>
     <div class="controls">
         <button onclick="generateTheme()">🎲 Choisir un thème</button>
-        <div id="theme">Clique sur le bouton pour obtenir un thème</div>
+        <div id="theme"></div>
         <label>Couleur : <input type="color" id="colorPicker" value="#000000"></label>
-        <label>Épaisseur : <input type="range" id="thickness" min="1" max="20" value="3"></label>
+        <label>Épaisseur : <input type="range" id="thickness" min="1" max="20" value="5"></label>
         <label>Texture :
             <select id="texture">
                 <option value="solid">Lisse</option>
@@ -27,45 +28,21 @@ html_code = """<!DOCTYPE html>
         </label>
     </div>
     <canvas id="drawingCanvas" width="600" height="400"></canvas>
-    <div id="buttons" style="display:none;">
-        <button onclick="saveDrawing()">💾 Enregistrer</button>
-        <button onclick="resetCanvas()">🔄 Recommencer</button>
+    <div>
+        <button id="saveBtn" onclick="saveDrawing()">💾 Enregistrer</button>
+        <button id="resetBtn" onclick="resetCanvas()">🔄 Recommencer</button>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAqz_mVbx4KU3PJYKJB_WyrrnqMhMMIyB4",
-            authDomain: "dessin-un-trait.firebaseapp.com",
-            projectId: "dessin-un-trait",
-            storageBucket: "dessin-un-trait.appspot.com",
-            messagingSenderId: "999057452657",
-            appId: "1:999057452657:web:777f7b2ad3c2c14c5635d0"
-        };
-
-        const app = firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
-
         const canvas = document.getElementById('drawingCanvas');
         const ctx = canvas.getContext('2d');
         const colorPicker = document.getElementById('colorPicker');
         const thickness = document.getElementById('thickness');
         const texture = document.getElementById('texture');
-        const buttons = document.getElementById('buttons');
-        const themeDisplay = document.getElementById('theme');
-
+        const saveBtn = document.getElementById('saveBtn');
+        const resetBtn = document.getElementById('resetBtn');
         let drawing = false;
         let hasDrawn = false;
-
-        const themes = ["éléphant", "famille", "cuisine", "robot", "amour", "montagne", "musique", "forêt", "ville", "fantôme", "plage", "chat", "aventure", "rêve", "orage", "espace", "magie", "fleur", "oiseau", "vélo"];
-
-        function generateTheme() {
-            const randomTheme = themes[Math.floor(Math.random() * themes.length)];
-            themeDisplay.textContent = "Thème : " + randomTheme;
-        }
 
         canvas.addEventListener('mousedown', (e) => {
             if (hasDrawn) return;
@@ -79,9 +56,9 @@ html_code = """<!DOCTYPE html>
             ctx.lineTo(e.offsetX, e.offsetY);
             ctx.strokeStyle = colorPicker.value;
             ctx.lineWidth = thickness.value;
-            if (texture.value === "dotted") {
-                ctx.setLineDash([2, 6]);
-            } else if (texture.value === "dashed") {
+            if (texture.value === 'dotted') {
+                ctx.setLineDash([2, 10]);
+            } else if (texture.value === 'dashed') {
                 ctx.setLineDash([10, 10]);
             } else {
                 ctx.setLineDash([]);
@@ -93,32 +70,29 @@ html_code = """<!DOCTYPE html>
             if (!drawing || hasDrawn) return;
             drawing = false;
             hasDrawn = true;
-            buttons.style.display = "block";
+            saveBtn.style.display = 'inline-block';
+            resetBtn.style.display = 'inline-block';
         });
 
         function saveDrawing() {
-            canvas.toBlob(function(blob) {
-                const storageRef = storage.ref();
-                const fileName = "dessins/dessin_" + Date.now() + ".png";
-                const drawingRef = storageRef.child(fileName);
-                drawingRef.put(blob).then(() => {
-                    alert("Dessin enregistré dans Firebase !");
-                }).catch((error) => {
-                    console.error("Erreur lors de l'enregistrement :", error);
-                });
-            }, 'image/png');
+            const link = document.createElement('a');
+            link.download = 'dessin.png';
+            link.href = canvas.toDataURL();
+            link.click();
         }
 
         function resetCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hasDrawn = false;
-            buttons.style.display = "none";
+            saveBtn.style.display = 'none';
+            resetBtn.style.display = 'none';
+        }
+
+        function generateTheme() {
+            const themes = ["famille", "éléphant", "cuisine", "robot", "amour", "montagne", "musique", "forêt", "ville", "rêve", "fantôme", "aventure", "magie", "plage", "hiver", "fleur", "oiseau", "vélo", "château", "nuage"];
+            const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+            document.getElementById('theme').textContent = "Thème : " + randomTheme;
         }
     </script>
 </body>
 </html>
-"""
-
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_code)
-
