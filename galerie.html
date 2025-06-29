@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Galerie des dessins</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f9f9f9;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 200px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .caption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #555;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Galerie des dessins</h1>
+    <div class="gallery">
+        <!-- Les images seront ajoutées ici -->
+        <!-- Exemple :
+        <div class="gallery-item">
+            <img src="dessins/dessin1.png" alt="dessin1.png">
+            <div class="caption">dessin1.png</div>
+        </div>
+        -->
+    </div>
+</body>
+</html>
